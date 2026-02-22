@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Data cache - large local data files
+data_cache/
+
+# Results - generated outputs
+results/
+
+# Debug files
+debug/
+
+# CSV data files (large)
+*.csv
+
+# Images (large)
+*.png
+*.jpg
+*.jpeg
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Downloaded data
+download_results.csv
+a_stock_sector_leaders_summary.csv
+a_stock_test_results.csv
