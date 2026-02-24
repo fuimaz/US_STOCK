@@ -1,0 +1,21 @@
+相关文件
+文件	说明
+scanners/scan_signals_realtime.py	主扫描文件（扫描买点+卖点信号）
+scanners/scan_buy_signals_realtime.py	简化版（只扫描买点信号）
+run_scan.bat	Windows批处理，双击即可运行
+🚀 使用方法
+方式1 - 直接运行 Python：
+
+cd c:\Users\jiman\Documents\trae_projects\us_stock
+python scanners/scan_signals_realtime.py
+方式2 - 双击运行（更简单）： 直接双击 run_scan.bat 文件即可
+
+📊 扫描功能
+扫描范围: 96只A股主要成分股（股票池可在代码中修改 STOCK_UNIVERSE）
+信号类型: 缠论第1类、第2类买卖点
+检测周期: 近5个交易日的信号
+输出结果:
+控制台显示信号汇总
+保存到 results/realtime_scan/ 目录（CSV + JSON 格式）
+⏰ 建议运行时间
+每天下午 2:00-3:00 运行，检测当日是否有买卖点信号
