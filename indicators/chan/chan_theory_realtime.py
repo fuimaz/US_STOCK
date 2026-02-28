@@ -343,12 +343,12 @@ class ChanTheoryRealtime:
                 # 第一类买卖点
                 if prev_xd['type'] == -1 and xd_type == 1:
                     if xd_high > zs_high:
-                        # 一买：在前一个向下线段终点（实时判断）
-                        buy_date = prev_xd['end']
+                        # 一买：在当前向上线段终点确认信号（避免回填到过去）
+                        buy_date = xd['end']
                         try:
                             buy_price = df.loc[buy_date, 'Close']
                         except KeyError:
-                            buy_price = prev_xd['low']
+                            buy_price = xd['low']
                         
                         df.loc[buy_date, 'buy_point'] = 1
                         buy_point = {
@@ -363,12 +363,12 @@ class ChanTheoryRealtime:
                         
                 elif prev_xd['type'] == 1 and xd_type == -1:
                     if xd_low < zs_low:
-                        # 一卖：在前一个向上线段终点（实时判断）
-                        sell_date = prev_xd['end']
+                        # 一卖：在当前向下线段终点确认信号（避免回填到过去）
+                        sell_date = xd['end']
                         try:
                             sell_price = df.loc[sell_date, 'Close']
                         except KeyError:
-                            sell_price = prev_xd['high']
+                            sell_price = xd['high']
                         
                         df.loc[sell_date, 'sell_point'] = 1
                         sell_point = {
@@ -385,11 +385,11 @@ class ChanTheoryRealtime:
                 if last_buy_point is not None:
                     if prev_xd['type'] == 1 and xd_type == -1:
                         if xd_low >= last_buy_point['price']:
-                            buy_date = prev_xd['end']
+                            buy_date = xd['end']
                             try:
                                 buy_price = df.loc[buy_date, 'Close']
                             except KeyError:
-                                buy_price = prev_xd['low']
+                                buy_price = xd['low']
                             
                             df.loc[buy_date, 'buy_point'] = 2
                             self.buy_points.append({
@@ -403,11 +403,11 @@ class ChanTheoryRealtime:
                 if last_sell_point is not None:
                     if prev_xd['type'] == -1 and xd_type == 1:
                         if xd_high <= last_sell_point['price']:
-                            sell_date = prev_xd['end']
+                            sell_date = xd['end']
                             try:
                                 sell_price = df.loc[sell_date, 'Close']
                             except KeyError:
-                                sell_price = prev_xd['high']
+                                sell_price = xd['high']
                             
                             df.loc[sell_date, 'sell_point'] = 2
                             self.sell_points.append({

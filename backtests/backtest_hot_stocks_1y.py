@@ -1,6 +1,6 @@
-"""
-A股最近1年热门股票缠论实时方案回测
-获取近1年涨幅前列的热门股票进行回测
+﻿"""
+A鑲℃渶杩?骞寸儹闂ㄨ偂绁ㄧ紶璁哄疄鏃舵柟妗堝洖娴?
+鑾峰彇杩?骞存定骞呭墠鍒楃殑鐑棬鑲＄エ杩涜鍥炴祴
 """
 import pandas as pd
 import numpy as np
@@ -11,48 +11,48 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-# 最近1年A股热门股票（按近1年涨幅和行业热度选取）
+# 鏈€杩?骞碅鑲＄儹闂ㄨ偂绁紙鎸夎繎1骞存定骞呭拰琛屼笟鐑害閫夊彇锛?
 HOT_STOCKS_1Y = [
-    # AI/人工智能概念 (2024-2025年最热门)
-    ('002230.SZ', '科大讯飞', 'AI'),
-    ('000977.SZ', '浪潮信息', 'AI服务器'),
-    ('002475.SZ', '立讯精密', 'AI硬件'),
+    # AI/浜哄伐鏅鸿兘姒傚康 (2024-2025骞存渶鐑棬)
+    ('002230.SZ', '绉戝ぇ璁', 'AI'),
+    ('000977.SZ', '娴疆淇℃伅', 'AI鏈嶅姟鍣?),
+    ('002475.SZ', '绔嬭绮惧瘑', 'AI纭欢'),
     
-    # 人形机器人 (2024下半年-2025最热门)
-    ('002050.SZ', '三花智控', '机器人'),
-    ('300124.SZ', '汇川技术', '机器人'),
+    # 浜哄舰鏈哄櫒浜?(2024涓嬪崐骞?2025鏈€鐑棬)
+    ('002050.SZ', '涓夎姳鏅烘帶', '鏈哄櫒浜?),
+    ('300124.SZ', '姹囧窛鎶€鏈?, '鏈哄櫒浜?),
     
-    # 算力/数据中心
-    ('600941.SS', '中国移动', '算力'),
+    # 绠楀姏/鏁版嵁涓績
+    ('600941.SS', '涓浗绉诲姩', '绠楀姏'),
     
-    # 新能源车
-    ('300750.SZ', '宁德时代', '新能源'),
-    ('002594.SZ', '比亚迪', '新能源'),
-    ('601012.SS', '隆基绿能', '光伏'),
+    # 鏂拌兘婧愯溅
+    ('300750.SZ', '瀹佸痉鏃朵唬', '鏂拌兘婧?),
+    ('002594.SZ', '姣斾簹杩?, '鏂拌兘婧?),
+    ('601012.SS', '闅嗗熀缁胯兘', '鍏変紡'),
     
-    # 银行（2024表现较好）
-    ('600036.SS', '招商银行', '银行'),
-    ('000001.SZ', '平安银行', '银行'),
-    ('601398.SS', '工商银行', '银行'),
+    # 閾惰锛?024琛ㄧ幇杈冨ソ锛?
+    ('600036.SS', '鎷涘晢閾惰', '閾惰'),
+    ('000001.SZ', '骞冲畨閾惰', '閾惰'),
+    ('601398.SS', '宸ュ晢閾惰', '閾惰'),
     
-    # 消费/白酒
-    ('600519.SS', '贵州茅台', '白酒'),
-    ('000858.SZ', '五粮液', '白酒'),
-    ('000333.SZ', '美的集团', '家电'),
+    # 娑堣垂/鐧介厭
+    ('600519.SS', '璐靛窞鑼呭彴', '鐧介厭'),
+    ('000858.SZ', '浜旂伯娑?, '鐧介厭'),
+    ('000333.SZ', '缇庣殑闆嗗洟', '瀹剁數'),
     
-    # 医药
-    ('600276.SS', '恒瑞医药', '医药'),
-    ('300760.SZ', '迈瑞医疗', '医药'),
+    # 鍖昏嵂
+    ('600276.SS', '鎭掔憺鍖昏嵂', '鍖昏嵂'),
+    ('300760.SZ', '杩堢憺鍖荤枟', '鍖昏嵂'),
     
-    # 高股息/红利 (2024年表现好)
-    ('601088.SS', '中国神华', '煤炭'),
-    ('600900.SS', '长江电力', '电力'),
-    ('601899.SS', '紫金矿业', '有色'),
+    # 楂樿偂鎭?绾㈠埄 (2024骞磋〃鐜板ソ)
+    ('601088.SS', '涓浗绁炲崕', '鐓ょ偔'),
+    ('600900.SS', '闀挎睙鐢靛姏', '鐢靛姏'),
+    ('601899.SS', '绱噾鐭夸笟', '鏈夎壊'),
 ]
 
 
 def load_cached_data(symbol, period='20y'):
-    """从缓存加载股票数据"""
+    """浠庣紦瀛樺姞杞借偂绁ㄦ暟鎹?""
     cache_file = f'data_cache/{symbol}_{period}_1d_forward.csv'
     
     if not os.path.exists(cache_file):
@@ -73,12 +73,12 @@ def load_cached_data(symbol, period='20y'):
 
 def backtest_chan_realtime(data, symbol, initial_capital=100000):
     """
-    缠论实时方案回测（无延迟，无未来函数）
+    缂犺瀹炴椂鏂规鍥炴祴锛堟棤寤惰繜锛屾棤鏈潵鍑芥暟锛?
     """
     if data is None or len(data) < 60:
         return None
     
-    # 只使用近1年数据
+    # 鍙娇鐢ㄨ繎1骞存暟鎹?
     end_date = data.index[-1]
     start_date = end_date - timedelta(days=365)
     data_backtest = data[data.index >= start_date].copy()
@@ -86,20 +86,20 @@ def backtest_chan_realtime(data, symbol, initial_capital=100000):
     if len(data_backtest) < 30:
         return None
     
-    # 使用缠论分析 - 实时近似方案
+    # 浣跨敤缂犺鍒嗘瀽 - 瀹炴椂杩戜技鏂规
     chan = ChanTheoryRealtime(k_type='day')
     result = chan.analyze(data)
     
-    # 获取回测区间内的买卖点
+    # 鑾峰彇鍥炴祴鍖洪棿鍐呯殑涔板崠鐐?
     buy_points = [bp for bp in chan.buy_points if bp['index'] in data_backtest.index and bp['type'] in [1, 2]]
     sell_points = [sp for sp in chan.sell_points if sp['index'] in data_backtest.index and sp['type'] in [1, 2]]
     
-    # 回测交易
+    # 鍥炴祴浜ゆ槗
     capital = initial_capital
     position = 0
     trades = []
     
-    # 合并信号
+    # 鍚堝苟淇″彿
     all_signals = []
     for bp in buy_points:
         all_signals.append({'date': bp['index'], 'type': 'buy', 'price': bp['price'], 'bp_type': bp['type']})
@@ -108,15 +108,15 @@ def backtest_chan_realtime(data, symbol, initial_capital=100000):
     
     all_signals.sort(key=lambda x: x['date'])
     
-    # 交易费用
-    commission = 0.001  # 0.1% 佣金
-    slippage = 0.0005   # 0.05% 滑点
+    # 浜ゆ槗璐圭敤
+    commission = 0.001  # 0.1% 浣ｉ噾
+    slippage = 0.0005   # 0.05% 婊戠偣
     
     for signal in all_signals:
         current_price = signal['price']
         
         if signal['type'] == 'buy' and position == 0:
-            # 买入
+            # 涔板叆
             shares = capital / (current_price * (1 + slippage))
             cost = shares * current_price * (1 + slippage) * (1 + commission)
             capital -= cost
@@ -130,7 +130,7 @@ def backtest_chan_realtime(data, symbol, initial_capital=100000):
             })
             
         elif signal['type'] == 'sell' and position > 0:
-            # 卖出
+            # 鍗栧嚭
             proceeds = position * current_price * (1 - slippage) * (1 - commission)
             capital += proceeds
             trades.append({
@@ -142,24 +142,24 @@ def backtest_chan_realtime(data, symbol, initial_capital=100000):
             })
             position = 0
     
-    # 计算最终价值
+    # 璁＄畻鏈€缁堜环鍊?
     final_price = data_backtest['Close'].iloc[-1]
     if position > 0:
         final_value = capital + position * final_price * (1 - slippage) * (1 - commission)
     else:
         final_value = capital
     
-    # 计算收益
+    # 璁＄畻鏀剁泭
     total_return = (final_value - initial_capital) / initial_capital * 100
     years = len(data_backtest) / 252
     annualized = ((final_value / initial_capital) ** (1/years) - 1) * 100 if years > 0 else 0
     
-    # 计算买入持有收益
+    # 璁＄畻涔板叆鎸佹湁鏀剁泭
     first_price = data_backtest['Close'].iloc[0]
     buyhold_return = (final_price - first_price) / first_price * 100
     buyhold_annualized = ((final_price / first_price) ** (1/years) - 1) * 100 if years > 0 else 0
     
-    # 计算胜率
+    # 璁＄畻鑳滅巼
     profits = []
     buy_trades = [t for t in trades if t['type'] == 'buy']
     sell_trades = [t for t in trades if t['type'] == 'sell']
@@ -174,7 +174,7 @@ def backtest_chan_realtime(data, symbol, initial_capital=100000):
     max_profit = max(profits) * 100 if profits else 0
     max_loss = min(profits) * 100 if profits else 0
     
-    # 计算最大回撤
+    # 璁＄畻鏈€澶у洖鎾?
     equity_curve = [initial_capital]
     for trade in trades:
         if trade['type'] == 'sell':
@@ -214,7 +214,7 @@ def backtest_chan_realtime(data, symbol, initial_capital=100000):
 
 
 def generate_charts(result, symbol, name, sector, output_dir='results/hot_stocks_1y'):
-    """生成K线图表"""
+    """鐢熸垚K绾垮浘琛?""
     os.makedirs(output_dir, exist_ok=True)
     
     data = result['data']
@@ -223,14 +223,14 @@ def generate_charts(result, symbol, name, sector, output_dir='results/hot_stocks
     
     fig, axes = plt.subplots(2, 1, figsize=(16, 10), gridspec_kw={'height_ratios': [3, 1]})
     
-    # 主图：K线
+    # 涓诲浘锛欿绾?
     ax1 = axes[0]
     
-    # 绘制K线
+    # 缁樺埗K绾?
     from mplfinance.original_flavor import candlestick_ohlc
     import matplotlib.dates as mdates
     
-    # 准备数据
+    # 鍑嗗鏁版嵁
     df_plot = data.reset_index()
     date_col = 'datetime' if 'datetime' in df_plot.columns else df_plot.columns[0]
     df_plot['Date'] = pd.to_datetime(df_plot[date_col])
@@ -239,7 +239,7 @@ def generate_charts(result, symbol, name, sector, output_dir='results/hot_stocks
     ohlc = df_plot[['Date', 'Open', 'High', 'Low', 'Close']].values
     candlestick_ohlc(ax1, ohlc, width=0.6, colorup='red', colordown='green', alpha=0.8)
     
-    # 标记买卖点
+    # 鏍囪涔板崠鐐?
     first_buy = True
     first_sell = True
     for bp in buy_points:
@@ -268,7 +268,7 @@ def generate_charts(result, symbol, name, sector, output_dir='results/hot_stocks
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
     ax1.xaxis.set_major_locator(mdates.MonthLocator(interval=2))
     
-    # 成交量
+    # 鎴愪氦閲?
     ax2 = axes[1]
     colors = ['red' if close >= open else 'green' for open, close in zip(data['Open'], data['Close'])]
     ax2.bar(df_plot['Date'], data['Volume'], color=colors, alpha=0.6, width=0.6)
@@ -287,7 +287,7 @@ def generate_charts(result, symbol, name, sector, output_dir='results/hot_stocks
 
 def main():
     print("=" * 100)
-    print("A股热门股票缠论实时方案回测 (近1年)")
+    print("A鑲＄儹闂ㄨ偂绁ㄧ紶璁哄疄鏃舵柟妗堝洖娴?(杩?骞?")
     print("=" * 100)
     print()
     
@@ -299,7 +299,7 @@ def main():
         print(f"Processing: {name} ({symbol}) - {sector}")
         print("-" * 100)
         
-        # 加载数据
+        # 鍔犺浇鏁版嵁
         data = load_cached_data(symbol, period='20y')
         if data is None:
             print(f"  [FAIL] No cached data available\n")
@@ -309,7 +309,7 @@ def main():
         print(f"  Data points: {len(data)}")
         print(f"  Date range: {data.index[0].strftime('%Y-%m-%d')} to {data.index[-1].strftime('%Y-%m-%d')}")
         
-        # 回测
+        # 鍥炴祴
         result = backtest_chan_realtime(data, symbol)
         if result is None:
             print(f"  [FAIL] Backtest failed\n")
@@ -327,7 +327,7 @@ def main():
         print(f"  Max drawdown: {result['max_drawdown']:.2f}%")
         print(f"  Avg profit: {result['avg_profit']:+.2f}%")
         
-        # 生成图表
+        # 鐢熸垚鍥捐〃
         chart_path = generate_charts(result, symbol, name, sector)
         print(f"  Chart: {chart_path}")
         
@@ -349,7 +349,7 @@ def main():
         success_count += 1
         print(f"  [OK] Done\n")
     
-    # 汇总统计
+    # 姹囨€荤粺璁?
     print("=" * 100)
     print("Backtest Summary")
     print("=" * 100)
@@ -358,7 +358,7 @@ def main():
     if results:
         df_results = pd.DataFrame(results)
         
-        # 按收益排序
+        # 鎸夋敹鐩婃帓搴?
         df_results = df_results.sort_values('total_return', ascending=False)
         
         print(f"{'Rank':<4} {'Symbol':<12} {'Name':<10} {'Sector':<10} {'Strategy':<10} {'Buy&Hold':<10} {'Excess':<10} {'WinRate':<8} {'Trades':<8}")
@@ -374,7 +374,7 @@ def main():
         print("-" * 100)
         print()
         
-        # 统计指标
+        # 缁熻鎸囨爣
         print("Overall Statistics:")
         print(f"  Stocks tested: {len(results)}")
         print(f"  Avg strategy return: {df_results['total_return'].mean():.2f}%")
@@ -386,7 +386,7 @@ def main():
         print(f"  Avg max drawdown: {df_results['max_drawdown'].mean():.2f}%")
         print()
         
-        # 按行业统计
+        # 鎸夎涓氱粺璁?
         print("By Sector:")
         sector_stats = df_results.groupby('sector').agg({
             'total_return': 'mean',
@@ -398,7 +398,7 @@ def main():
         print(sector_stats)
         print()
         
-        # 保存结果
+        # 淇濆瓨缁撴灉
         output_file = 'results/hot_stocks_1y_backtest.csv'
         os.makedirs('results', exist_ok=True)
         df_results.to_csv(output_file, index=False, encoding='utf-8-sig')
@@ -411,3 +411,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
