@@ -19,3 +19,19 @@ python scanners/scan_signals_realtime.py
 保存到 results/realtime_scan/ 目录（CSV + JSON 格式）
 ⏰ 建议运行时间
 每天下午 2:00-3:00 运行，检测当日是否有买卖点信号
+
+
+已加好“每天扫描本策略买入/卖出点”的脚本：scanners/scan_ma_convergence_daily.py:1
+
+用法示例（扫描最新一根K线触发的 BUY/SELL）：
+
+扫“稳定行业.txt”（默认就是这个文件）：python scanners/scan_ma_convergence_daily.py --a-share-only --years 20
+扫你之前的稳定行业领涨股CSV：python scanners/scan_ma_convergence_daily.py --symbols-file a_stock_sector_leaders_summary.csv --a-share-only --years 20
+不加止损/加时间退出等（和回测参数一致）：python scanners/scan_ma_convergence_daily.py --no-stop-loss --time-exit-days 90 --a-share-only --years 20
+多进程加速：python scanners/scan_ma_convergence_daily.py --workers 8 --a-share-only --years 20
+
+
+已按“扫描出有交易信号”的股票生成K线图（含成交量、5/10/20/60均线、买卖点标记），并把表格补全了股票名称/市值/涨跌幅/日期：results/ma_convergence_scan_charts/ma_convergence_scan_20260302_145754_20260302_154028/index.html:1、results/ma_convergence_scan_charts/ma_convergence_scan_20260302_145754_20260302_154028/charts.csv:1
+这次名称/市值来自本地市值清单CSV（--meta-csv），涨跌幅pct_chg按缓存日线“最后一根K线 vs 前一根收盘”计算；表里新增了latest_date（K线数据截止日）和meta_asof（市值数据时间）方便你对齐日期
+生成命令（你后续换别的scan结果也一样用）：python scripts/generate_ma_convergence_charts_from_scan.py --scan-csv results/ma_convergence_daily_scan_mv100yi_20260302_144411/ma_convergence_scan_20260302_145754.csv --data-years 20 --plot-years 5 --workers 4 --meta-csv results/a_share_total_mv_ge_100yi_excl_sina_20260302_144411.csv
+代码入口在 scripts/generate_ma_convergence_charts_from_scan.py:227（加载meta-csv）和 scripts/generate_ma_convergence_charts_from_scan.py:443（新增参数）；AkShare实时快照当前会被系统代理影响而失败，所以走了本地CSV兜底

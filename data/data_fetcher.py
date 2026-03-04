@@ -47,19 +47,19 @@ class DataFetcher:
         """从缓存加载数据"""
         try:
             data = pd.read_csv(cache_path, index_col=0, parse_dates=True)
-            print(f"  ✓ 从缓存加载数据")
+            print("  [OK] 从缓存加载数据")
             return data
         except Exception as e:
-            print(f"  ✗ 加载缓存失败: {e}")
+            print(f"  [WARN] 加载缓存失败: {e}")
             return None
     
     def _save_cache(self, data: pd.DataFrame, cache_path: str):
         """保存数据到缓存"""
         try:
             data.to_csv(cache_path)
-            print(f"  ✓ 数据已缓存到本地")
+            print("  [OK] 数据已缓存到本地")
         except Exception as e:
-            print(f"  ✗ 保存缓存失败: {e}")
+            print(f"  [WARN] 保存缓存失败: {e}")
     
     def _fetch_from_alpha_vantage(self, symbol: str, period: str = "1y") -> pd.DataFrame:
         """从 Alpha Vantage 获取股票数据"""
@@ -89,10 +89,10 @@ class DataFetcher:
             
             return data
         except ImportError:
-            print("  ✗ 需要安装 alpha_vantage: python -m pip install alpha_vantage")
+            print("  [WARN] 需要安装 alpha_vantage: python -m pip install alpha_vantage")
             raise
         except Exception as e:
-            print(f"  ✗ Alpha Vantage 获取失败: {e}")
+            print(f"  [WARN] Alpha Vantage 获取失败: {e}")
             raise
     
     def _fetch_from_polygon(self, symbol: str, period: str = "1y") -> pd.DataFrame:
@@ -139,10 +139,10 @@ class DataFetcher:
             
             return data
         except ImportError:
-            print("  ✗ 需要安装 requests: python -m pip install requests")
+            print("  [WARN] 需要安装 requests: python -m pip install requests")
             raise
         except Exception as e:
-            print(f"  ✗ Polygon.io 获取失败: {e}")
+            print(f"  [WARN] Polygon.io 获取失败: {e}")
             raise
     
     def _fetch_from_stooq(self, symbol: str, period: str = "1y") -> pd.DataFrame:
@@ -185,7 +185,7 @@ class DataFetcher:
             
             return data
         except Exception as e:
-            print(f"  ✗ Stooq 获取失败: {e}")
+            print(f"  [WARN] Stooq 获取失败: {e}")
             raise
     
     def _fetch_from_twelve_data(self, symbol: str, period: str = "1y") -> pd.DataFrame:
@@ -236,7 +236,7 @@ class DataFetcher:
             
             return data
         except Exception as e:
-            print(f"  ✗ Twelve Data 获取失败: {e}")
+            print(f"  [WARN] Twelve Data 获取失败: {e}")
             raise
     
     def _apply_adjustment(self, data: pd.DataFrame, adjust: str = "none") -> pd.DataFrame:
@@ -289,7 +289,7 @@ class DataFetcher:
             for col in ['Open', 'High', 'Low', 'Close']:
                 data[col] = data[col].round(2)
         
-        print(f"  ✓ 已应用{adjust}复权")
+        print(f"  [OK] 已应用{adjust}复权")
         return data
     
     def fetch_stock_data(
@@ -335,7 +335,7 @@ class DataFetcher:
                 import os
                 os.environ['HTTP_PROXY'] = self.proxy
                 os.environ['HTTPS_PROXY'] = self.proxy
-                print(f"  ✓ 使用代理: {self.proxy}")
+                print(f"  [OK] 使用代理: {self.proxy}")
             
             ticker = yf.Ticker(symbol)
             
@@ -373,7 +373,7 @@ class DataFetcher:
                     else:
                         raise e
         except Exception as e:
-            print(f"  ✗ yfinance 获取失败: {e}")
+            print(f"  [WARN] yfinance 获取失败: {e}")
             print(f"  正在尝试 Stooq...")
         
         # 如果 yfinance 失败，尝试 Stooq
@@ -385,7 +385,7 @@ class DataFetcher:
                 self._save_cache(data, cache_path)
             return data
         except Exception as e:
-            print(f"  ✗ Stooq 获取失败: {e}")
+            print(f"  [WARN] Stooq 获取失败: {e}")
             print(f"  正在尝试 Twelve Data...")
         
         # 如果 Stooq 失败，尝试 Twelve Data
@@ -397,7 +397,7 @@ class DataFetcher:
                 self._save_cache(data, cache_path)
             return data
         except Exception as e:
-            print(f"  ✗ Twelve Data 获取失败: {e}")
+            print(f"  [WARN] Twelve Data 获取失败: {e}")
             print(f"  正在尝试 Alpha Vantage...")
         
         # 如果 Twelve Data 失败，尝试 Alpha Vantage
@@ -409,7 +409,7 @@ class DataFetcher:
                 self._save_cache(data, cache_path)
             return data
         except Exception as e:
-            print(f"  ✗ Alpha Vantage 获取失败: {e}")
+            print(f"  [WARN] Alpha Vantage 获取失败: {e}")
             print(f"  正在尝试 Polygon.io...")
         
         # 如果 Alpha Vantage 失败，尝试 Polygon.io
@@ -519,7 +519,7 @@ class DataFetcher:
             if self.proxy:
                 os.environ['HTTP_PROXY'] = self.proxy
                 os.environ['HTTPS_PROXY'] = self.proxy
-                print(f"  ✓ 使用代理: {self.proxy}")
+                print(f"  [OK] 使用代理: {self.proxy}")
 
             raw = yf.download(
                 tickers=' '.join(unique_symbols),
